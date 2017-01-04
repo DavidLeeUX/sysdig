@@ -14,9 +14,9 @@ RUN cp /etc/skel/.bashrc /root && cp /etc/skel/.profile /root
 
 ADD http://download.draios.com/apt-draios-priority /etc/apt/preferences.d/
 
-RUN echo "deb http://httpredir.debian.org/debian jessie main" > /etc/apt/sources.list.d/jessie.list \
- && apt-get update \
- && apt-get install -y --no-install-recommends \
+RUN echo "deb http://httpredir.debian.org/debian jessie main" > /etc/apt/sources.list.d/jessie.list
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
 	bash-completion \
 	curl \
 	gnupg2 \
@@ -24,7 +24,9 @@ RUN echo "deb http://httpredir.debian.org/debian jessie main" > /etc/apt/sources
 	gcc \
 	gcc-5 \
 	gcc-4.9 \
-	libelf1 less && rm -rf /var/lib/apt/lists/*
+	libelf1 \
+	less
+RUN rm -rf /var/lib/apt/lists/*
 
 # Terribly terrible hacks: since our base Debian image ships with GCC 5.0 which breaks older kernels,
 # revert the default to gcc-4.9. Also, since some customers use some very old distributions whose kernel
@@ -37,12 +39,12 @@ RUN rm -rf /usr/bin/gcc \
  && ln -s /usr/bin/gcc-4.9 /usr/bin/gcc-4.7 \
  && ln -s /usr/bin/gcc-4.9 /usr/bin/gcc-4.6
 
-RUN curl -s https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public | apt-key add - \
- && curl -s -o /etc/apt/sources.list.d/draios.list http://download.draios.com/$SYSDIG_REPOSITORY/deb/draios.list \
- && apt-get update \
- && apt-get install -y --no-install-recommends sysdig \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+RUN curl -s https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public | apt-key add -
+RUN curl -s -o /etc/apt/sources.list.d/draios.list http://download.draios.com/$SYSDIG_REPOSITORY/deb/draios.list
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends sysdig
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN ln -s $SYSDIG_HOST_ROOT/lib/modules /lib/modules
 
